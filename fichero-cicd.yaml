@@ -1,0 +1,124 @@
+# author: 
+
+# --------------------------------------
+# CICD template for Microservices
+# --------------------------------------
+
+#
+cicd-version: 1.0.0
+#
+name: microservice 
+#
+component: "componente part"
+#
+description: |
+  configuration file (CICD ) of microservice "X" part of "componente part"
+
+#
+create-img-job:
+  enable: true
+  waitSeconds: 0
+  # docker base image use
+  ## PYTHON JAVA NODEJS JAVASCRIPT ...
+  type: 
+  # image version used
+  ## JAVA VERSION NODEJS VERSION ...
+  version: 0.0.1-SNAPSHOT
+
+#
+k8s-deploy-job:
+  #
+  ##
+  enable: true
+  # timeOut second to start the job (used in case of create new img and deploy new img)
+  ## 60 | 120 | 240 | 300 | 360 
+  waitSeconds: 120
+  # k8s cluster en el que se va a desplegar el micro servicio
+  ## cluster-a | cluster-b 
+  k8s-cluster: 
+  # k8s namespace en el que se va a desplegar el micro servicio
+  ## project-dev | project-sta | project-pro
+  namespace:  
+
+  # 
+  - unitId: "deploy microservice"
+    # 
+    ## create (create a new resource) | update (update de actual resource with a new config) | delete (delete actual resource)
+    actions: create
+    # enable or disable the unitd
+    ## true | false
+    enable: false
+    # folder that will be deployed
+    ## k8s/*-base-deployment | k8s/*-base-expose
+    deploy-dir: k8s/microservice-base-deployment
+    # deployment method that will be used
+    ## helm (helm install) | kubernetes (kubeclt apply) | openshift (oc apply)
+    deploy-type: helm
+    #
+    ##
+    waitSeconds: 120
+    #
+    ##
+    config:
+      ##image
+      image-repository: linuxserver
+      image-name: wireguard
+      image-tag: arm64v8-1.0.20210914
+      ##resources
+      #request
+      memory-request: "64Mi"
+      cpu-request: "10m"
+      #limits
+      memory-limit: "256Mi"
+      cpu-limit: "200m"
+      ##enviroment variable values
+      env:
+        - name: TZ 
+          value: ""
+        - name: JAVA_OPTS
+          value: ""
+        - name: APP_NAME
+          value: ""
+      ##secrets
+      secret-name-data: vault://
+      secret-name2-data: vault://
+      
+      
+  # k8s namespace en el que se va a desplegar el micro servicio
+  ## 
+  - unitId: "expose microservice"
+    #
+    ##
+    enable: false
+    #
+    ##
+    deploy-dir: k8s/microservice-base-deployment
+    #
+    ##
+    deploy-type: Helm
+    #
+    ##
+    expose-component: nginx
+    #
+    ##
+    waitSeconds: 120
+    #
+    ##
+    config:
+      ##
+      host: 
+        - *.empresa.com
+        - *-test.empresa.com
+      ##
+      certs:
+        root-ca: 
+        client-ca:
+        full-ca:
+
+
+
+
+
+    
+  
+  
